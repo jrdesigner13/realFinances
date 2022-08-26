@@ -2,6 +2,7 @@
   "expo": {
     "name": "realFinances",
     "slug": "realFinances",
+    "scheme": "realfinances",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
