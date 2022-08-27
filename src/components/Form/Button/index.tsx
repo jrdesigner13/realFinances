@@ -1,6 +1,5 @@
 import React from "react";
 import { RectButtonProps } from "react-native-gesture-handler";
-import { gestureHandlerRootHOC } from "react-native-gesture-handler";
 
 import {
   Container,
@@ -20,4 +19,4 @@ const Button = ({ title, onPress, ...rest }: Props) => {
   );
 }
 
-export default gestureHandlerRootHOC(Button);
+export default Button;

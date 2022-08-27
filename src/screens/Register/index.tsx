@@ -8,7 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from 'react-native-uuid';
 import { useNavigation } from "@react-navigation/native";
 
-import { Button } from "../../components/Form/Button";
+import  Button  from "../../components/Form/Button";
 import { CategorySelect } from "../../components/Form/CategorySelect";
 import { InputForm } from "../../components/Form/InputForm";
 import { TransactionTypeButton } from "../../components/Form/TransactionTypeButton";
