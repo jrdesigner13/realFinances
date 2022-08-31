@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/native';
-import { RectButton } from "react-native-gesture-handler";
+import { TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -32,7 +32,7 @@ export const Container = styled.View<ContainerProps>`
     `}
 `;
 
-export const Button = styled(RectButton)`
+export const Button = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: center;
   align-items: center;

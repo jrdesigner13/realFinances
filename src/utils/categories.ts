@@ -9,5 +9,5 @@ export const categories = [
     { key: 'purchases', name: 'Purchases', icon: 'shopping-bag', color: '#5636D3' },
     { key: 'salary', name: 'Salary', icon: 'dollar-sign', color: '#12A454' },
     { key: 'sport', name: 'Sport', icon: 'award', color: '#bf9b30' },
-    { key: 'studies', name: 'Studies', icon: 'book', color: '#ffff00' },
+    { key: 'studies', name: 'Studies', icon: 'book', color: '#DB7093' },
 ]; 
