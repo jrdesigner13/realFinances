@@ -2,10 +2,19 @@
   "expo": {
     "name": "realFinances",
     "slug": "realFinances",
-    "scheme": "realfinances",
+    "scheme": "com.realfinances",
     "version": "1.0.0",
+    "orientation": "portrait",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "android": {
+      "package": "com.realfinances"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.realfinances",
+      "buildNumber": "3"
+    }
   }
 }

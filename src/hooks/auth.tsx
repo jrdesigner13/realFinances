@@ -6,7 +6,8 @@ import React, {
   useEffect 
 } from "react";
 
-import * as AuthSession from 'expo-auth-session';
+//import * as AuthSession from 'expo-auth-session';
+import * as Google from 'expo-auth-session/providers/google';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -47,18 +48,30 @@ function AuthProvider({ children }: AuthProviderProps ){
 
   const userStorageKey = '@realFinances:user';
 
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: CLIENT_ID,
+   });
+
   async function signInWithGoogle(){
     try {
       
-     const RESPONSE_TYPE = 'token';
+     const RESPONSE_TYPE = encodeURI('code token');
       const SCOPE = encodeURI('profile email');
 
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`;
 
-      const { type, params } = await AuthSession.startAsync({ authUrl }) as AuthorizationResponse;
+     //const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`
+  //  const { type, params } = await AuthSession.startAsync({ authUrl }) as AuthorizationResponse;
+     const response = await Google.useAuthRequest({
+      androidClientId: CLIENT_ID
+     });
+     //await AuthSession.startAsync({ authUrl }) as AuthorizationResponse;
+     console.log("aqui XXXX");
+     console.log(response);
+     console.log("foi XXXX");
       
       if(type === 'success') {
-        const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`);
+       // const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`);
         const userInfo = await response.json();
 
         const userLoggedIn = {
@@ -74,6 +87,7 @@ function AuthProvider({ children }: AuthProviderProps ){
 
 
     } catch (error) {
+      console.log(error);
       throw new Error(error);
     }
   }
@@ -124,6 +138,13 @@ function AuthProvider({ children }: AuthProviderProps ){
     loadUserStorageData();
 
   }, []);
+
+  useEffect(() => {
+    console.log(response);
+    if(response?.type === 'success') {
+      const { authentication } = response;
+    }
+  }, [response]);
 
   return(
     <AuthContext.Provider value={{ 
