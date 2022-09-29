@@ -6,12 +6,16 @@ import React, {
   useEffect 
 } from "react";
 
+const { ANDROID_CLIENT_ID } = process.env;
+
 //import * as AuthSession from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { CLIENT_ID } = process.env;
+const { EXPO_CLIENT_ID } = process.env;
+
+const { IOS_CLIENT_ID } = process.env;
 const { REDIRECT_URI } = process.env;
 
 interface AuthProviderProps {
@@ -27,7 +31,7 @@ interface User {
 
 interface IAuthContextData {
   user: User;
-  signInWithGoogle(): Promise<void>;
+  signInWithGoogleRequest(): Promise<void>;
   signInWithApple(): Promise<void>;
   signOut(): Promise<void>;
   userStorageLoading: boolean;
@@ -49,46 +53,41 @@ function AuthProvider({ children }: AuthProviderProps ){
   const userStorageKey = '@realFinances:user';
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: CLIENT_ID,
+    expoClientId: EXPO_CLIENT_ID,
+    androidClientId: '255015221240-2bvrvfjc3v9rsmq0do9818e681r7cv09.apps.googleusercontent.com',
+    iosClientId: IOS_CLIENT_ID
    });
 
-  async function signInWithGoogle(){
+   async function signInWithGoogleRequest() {
     try {
-      
-     const RESPONSE_TYPE = encodeURI('code token');
-      const SCOPE = encodeURI('profile email');
+      setUserStorageLoading(true);
+      await promptAsync();
+    } catch (error) {
+      setUserStorageLoading(false);
+      console.log(error);
+      throw error;
+    }
+  }
 
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`;
+  async function signInWithGoogle(accessToken: string){
+    try {
+      const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`);
+      const userInfo = await response.json();
 
-     //const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`
-  //  const { type, params } = await AuthSession.startAsync({ authUrl }) as AuthorizationResponse;
-     const response = await Google.useAuthRequest({
-      androidClientId: CLIENT_ID
-     });
-     //await AuthSession.startAsync({ authUrl }) as AuthorizationResponse;
-     console.log("aqui XXXX");
-     console.log(response);
-     console.log("foi XXXX");
-      
-      if(type === 'success') {
-       // const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`);
-        const userInfo = await response.json();
+      const userLoggedIn = {
+        id: userInfo.id,
+        name: userInfo.given_name,
+        email: userInfo.email,
+        photo: userInfo.picture
+      };
 
-        const userLoggedIn = {
-          id: userInfo.id,
-          name: userInfo.given_name,
-          email: userInfo.email,
-          photo: userInfo.picture
-        };
-
-        setUser(userLoggedIn);
-        await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLoggedIn));
-      }
-
-
+      setUser(userLoggedIn);
+      await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLoggedIn));
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
+    } finally {
+      setUserStorageLoading(false);
     }
   }
 
@@ -140,16 +139,17 @@ function AuthProvider({ children }: AuthProviderProps ){
   }, []);
 
   useEffect(() => {
-    console.log(response);
-    if(response?.type === 'success') {
-      const { authentication } = response;
+    if(response?.type === 'success' && response.authentication?.accessToken) {
+      signInWithGoogle(response.authentication.accessToken);
+    } else if (userStorageLoading) {
+      setUserStorageLoading(false);
     }
   }, [response]);
 
   return(
     <AuthContext.Provider value={{ 
       user, 
-      signInWithGoogle,
+      signInWithGoogleRequest,
       signInWithApple,
       signOut,
       userStorageLoading

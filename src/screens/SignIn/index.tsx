@@ -23,13 +23,13 @@ import { SignInSocialButton } from "../../components/SignInSocialButton";
 
 export function SignIn(){
   const [isLoading, setIsLoading] = useState(false);
-  const { signInWithGoogle, signInWithApple } = useAuth();
+  const { signInWithGoogleRequest, signInWithApple } = useAuth();
   const theme = useTheme();
 
   async function handleSignInWithGoogle() {
     try {
       setIsLoading(true);
-      return await signInWithGoogle();
+      return await signInWithGoogleRequest();
 
     } catch (error) {
       console.log(error);
