@@ -10,7 +10,7 @@ const { ANDROID_CLIENT_ID } = process.env;
 
 //import * as AuthSession from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
-import * as AppleAuthentication from 'expo-apple-authentication';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { EXPO_CLIENT_ID } = process.env;
@@ -93,19 +93,20 @@ function AuthProvider({ children }: AuthProviderProps ){
 
   async function signInWithApple(){
     try {
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ]
-      });
+        // performs login request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+          requestedOperation: appleAuth.Operation.LOGIN,
+          // Note: it appears putting FULL_NAME first is important, see issue #293
+          requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+        });
 
-      if(credential) {
-        const name = credential.fullName!.givenName!;
+
+      if(appleAuthRequestResponse.identityToken) {
+        const name = appleAuthRequestResponse.fullName?.givenName!;
         const userLogged = {
-          id: String(credential.user),
+          id: String(appleAuthRequestResponse.user),
           name,
-          email: credential.email,
+          email: appleAuthRequestResponse.email,
           photo: `https://ui-avatars.com/api/?name=${name}&length=1`
         };
 
