@@ -9,6 +9,9 @@
 #### Typescript
 ####
 
+### This app is published in stores, you can find it at the following link:
+### Android https://play.google.com/store/apps/details?id=com.realfinances
+### iOS https://apps.apple.com/app/realfinances/id1673163846
 
 ### Installation 
 
