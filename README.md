@@ -1,4 +1,4 @@
-# 2022 - Real Finances
+# 2022/23 - Real Finances
 #### This is the repository with the source code developed from an app using React Native with : 
 #### Expo (bare-workflow)
 #### React Navigation 6^
